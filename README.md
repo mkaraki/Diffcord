@@ -14,3 +14,7 @@ There are commands
 - logging subsystem delete \[yes/no] **# Enable or Disable deletion logging**
 - logging here **# Set logging channel here**
 - write **# Write configuration to file**
+
+## Config file
+
+We use `./config.yaml` to save informations.
