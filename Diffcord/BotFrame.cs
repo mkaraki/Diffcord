@@ -35,7 +35,7 @@ namespace Diffcord
             var c = Client.GetChannel(config.logging_channel) as IMessageChannel;
 
             if (arg1.Value == null)
-                c.SendMessageAsync($"Detected Message Update in <#{arg3.Id}>: NO CACHE: {arg2.GetJumpUrl()}");
+                c.SendMessageAsync($"Detected <@{arg2.Author.Id}> Update Message in <#{arg3.Id}>: NO CACHE: {arg2.GetJumpUrl()}");
             else
             {
                 var diff = InlineDiffBuilder.Diff(arg1.Value.Content, arg2.Content);
@@ -53,7 +53,7 @@ namespace Diffcord
                             break;
                     }
                 }
-                c.SendMessageAsync($"Detected Message Update in <#{arg3.Id}>: {arg2.GetJumpUrl()}\n```diff\n" +
+                c.SendMessageAsync($"Detected <@{arg2.Author.Id}> Update Message in <#{arg3.Id}>: {arg2.GetJumpUrl()}\n```diff\n" +
                     unidiff + "```");
             }
 
@@ -72,7 +72,7 @@ namespace Diffcord
             if (arg1.Value == null)
                 c.SendMessageAsync("Detected Message Deletion: NO CACHE IN SERVICE");
             else 
-                c.SendMessageAsync($"Detected Message Deletion in <#{arg2.Value.Id}>\n```" +
+                c.SendMessageAsync($"Detected <@{arg1.Value.Author.Id}> Delete Message in <#{arg2.Value.Id}>\n```" +
                     arg1.Value.Content.Replace("```", "\\```") + "\n```");
 
             return Task.CompletedTask;
