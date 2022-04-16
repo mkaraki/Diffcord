@@ -8,4 +8,8 @@ FROM mcr.microsoft.com/dotnet/runtime:6.0
 
 COPY --from=build /artifact /app
 
+WORKDIR /app
+
+VOLUME /app/config.yaml
+
 ENTRYPOINT ["dotnet", "/app/Diffcord.dll"]
