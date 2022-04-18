@@ -38,6 +38,7 @@ namespace Diffcord
                 c.SendMessageAsync($"Detected <@{arg2.Author.Id}> Update Message in <#{arg3.Id}>: NO CACHE: {arg2.GetJumpUrl()}");
             else
             {
+                if (arg1.Value.Content == arg2.Content) return Task.CompletedTask;
                 var diff = InlineDiffBuilder.Diff(arg1.Value.Content, arg2.Content);
                 string unidiff = string.Empty;
                 foreach (var l in diff.Lines)
