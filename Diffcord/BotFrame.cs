@@ -39,6 +39,7 @@ namespace Diffcord
             else
             {
                 if (arg1.Value.Content == arg2.Content) return Task.CompletedTask;
+                if (arg1.Value.Author.Id == Client.CurrentUser.Id) return Task.CompletedTask;
                 var diff = InlineDiffBuilder.Diff(arg1.Value.Content, arg2.Content);
                 string unidiff = string.Empty;
                 foreach (var l in diff.Lines)
@@ -72,9 +73,12 @@ namespace Diffcord
 
             if (arg1.Value == null)
                 c.SendMessageAsync("Detected Message Deletion: NO CACHE IN SERVICE");
-            else 
-                c.SendMessageAsync($"Detected <@{arg1.Value.Author.Id}> Delete Message in <#{arg2.Value.Id}>\n```" +
+            else
+            {
+                if (arg1.Value.Author.Id == Client.CurrentUser.Id) return Task.CompletedTask;
+                c.SendMessageAsync($"Detected <@{arg1.Value.Author.Id}>'s message deleted in <#{arg2.Value.Id}>\n```" +
                     arg1.Value.Content.Replace("```", "\\```") + "\n```");
+            }
 
             return Task.CompletedTask;
         }
