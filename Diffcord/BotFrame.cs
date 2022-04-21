@@ -35,7 +35,7 @@ namespace Diffcord
             var c = Client.GetChannel(config.logging_channel) as IMessageChannel;
 
             if (arg1.Value == null)
-                c.SendMessageAsync($"Detected <@{arg2.Author.Id}> Update Message in <#{arg3.Id}>: NO CACHE: {arg2.GetJumpUrl()}");
+                SendMessageToChannel(config.logging_channel, $"Detected <@{arg2.Author.Id}> Update Message in <#{arg3.Id}>: NO CACHE: {arg2.GetJumpUrl()}");
             else
             {
                 if (arg1.Value.Content == arg2.Content) return Task.CompletedTask;
@@ -72,7 +72,7 @@ namespace Diffcord
             var c = Client.GetChannel(config.logging_channel) as IMessageChannel;
 
             if (arg1.Value == null)
-                c.SendMessageAsync("Detected Message Deletion: NO CACHE IN SERVICE");
+                SendMessageToChannel(config.logging_channel, "Detected Message Deletion: NO CACHE IN SERVICE");
             else
             {
                 if (arg1.Value.Author.Id == Client.CurrentUser.Id) return Task.CompletedTask;
@@ -83,6 +83,12 @@ namespace Diffcord
             return Task.CompletedTask;
         }
 
+        private async void SendMessageToChannel(ulong channel, string message)
+        { 
+            var c = Client.GetChannel(config.logging_channel) as IMessageChannel;
+            await c.SendMessageAsync(message);
+        }
+
         private Task Client_MessageReceived(SocketMessage msg)
         {
             if (msg.Author.IsBot) return Task.CompletedTask;
@@ -91,6 +97,8 @@ namespace Diffcord
 
             string evm = msg.Content.Substring(2);
             string[] args = evm.Split(' ');
+
+            ulong chid = 0;
 
             bool? confbool = null;
 
@@ -117,6 +125,23 @@ namespace Diffcord
 
                         case "here":
                             config.logging_channel = msg.Channel.Id;
+                            msg.Channel.SendMessageAsync($"New Logging Destination Set: <#{msg.Channel.Id}>");
+                            break;
+
+                        case "destination":
+                            if (args.Length < 3) return Task.CompletedTask;
+                            try
+                            {
+                                chid = ulong.Parse(args[2]);
+                                SendMessageToChannel(chid, $"Resolving new logging destination: <#{msg.Channel.Id}>");
+                            }
+                            catch (Exception)
+                            { 
+                                msg.Channel.SendMessageAsync("% Not valid channel id");
+                                return Task.CompletedTask;
+                            }
+                            config.logging_channel = chid;
+                            msg.Channel.SendMessageAsync($"New Logging Destination Set: <#{msg.Channel.Id}>");
                             break;
                     }
                     break;
@@ -124,6 +149,16 @@ namespace Diffcord
                 case "write":
                     msg.Channel.SendMessageAsync("Building Configuration");
                     WriteConfig();
+                    break;
+
+                case "show":
+                    if (args.Length < 2) return Task.CompletedTask;
+                    switch (args[1])
+                    {
+                        case "running-config":
+                            msg.Channel.SendMessageAsync(MakeConfig());
+                            return Task.CompletedTask;
+                    }
                     break;
             }
 
@@ -149,7 +184,7 @@ namespace Diffcord
         private Config config = new Config();
 
         private bool? YesNoBool(string yesno)
-        { 
+        {
             yesno = yesno.ToLower();
             yesno = yesno.Trim();
 
@@ -176,6 +211,21 @@ namespace Diffcord
             var yml = ser.Serialize(config);
 
             File.WriteAllText("config.yaml", yml, Encoding.UTF8);
+        }
+
+        private string MakeConfig()
+        {
+            var rconflist = new List<string>();
+
+            if (config.logging_subsystem_delete)
+                rconflist.Add("+=logging subsystem delete yes");
+
+            if (config.logging_subsystem_edit)
+                rconflist.Add("+=logging subsystem edit yes");
+
+            rconflist.Add($"+=logging destination {config.logging_channel}");
+
+            return string.Join("\n", rconflist);
         }
 
         internal async Task MainAsync()
