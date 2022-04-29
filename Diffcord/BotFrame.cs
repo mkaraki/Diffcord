@@ -77,7 +77,7 @@ namespace Diffcord
             {
                 if (arg1.Value.Author.Id == Client.CurrentUser.Id) return Task.CompletedTask;
                 c.SendMessageAsync($"Detected <@{arg1.Value.Author.Id}>'s message deleted in <#{arg2.Value.Id}>\n```" +
-                    arg1.Value.Content.Replace("```", "\\```") + "\n```");
+                    arg1.Value.Content.Replace("```", "<blockquote>") + "\n```");
             }
 
             return Task.CompletedTask;
