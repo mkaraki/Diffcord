@@ -1,10 +1,10 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 as build
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 
 COPY Diffcord /app
 
 RUN dotnet build /app/Diffcord.csproj /p:Configuration=Release -o /artifact
 
-FROM mcr.microsoft.com/dotnet/runtime:6.0
+FROM dhi.io/dotnet:10.0-alpine3.22
 
 COPY --from=build /artifact /app
 

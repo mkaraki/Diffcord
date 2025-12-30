@@ -35,7 +35,11 @@ namespace Diffcord
             var c = Client.GetChannel(config.logging_channel) as IMessageChannel;
 
             if (arg1.Value == null)
-                SendMessageToChannel(config.logging_channel, $"Detected <@{arg2.Author.Id}> Update Message in <#{arg3.Id}>: NO CACHE: {arg2.GetJumpUrl()}");
+            {
+                SendMessageToChannel(config.logging_channel, $"Detected `{arg2.Author.GlobalName}` Update Message in <#{arg3.Id}>: NO CACHE: {arg2.GetJumpUrl()}");
+                // By some reason, got this event randomly even no action operated, so disable mention.
+                //SendMessageToChannel(config.logging_channel, $"Detected <@{arg2.Author.Id}> Update Message in <#{arg3.Id}>: NO CACHE: {arg2.GetJumpUrl()}");
+            }
             else
             {
                 if (arg1.Value.Content == arg2.Content) return Task.CompletedTask;
