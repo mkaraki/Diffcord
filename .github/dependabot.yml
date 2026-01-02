@@ -4,6 +4,13 @@
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
+registries:
+  dhi:
+    type: docker-registry
+    url: https://dhi.io
+    username: ${{secrets.DOCKER_USER}}
+    password: ${{secrets.DOCKER_PAT}}
+    replaces-base: true
 updates:
   - package-ecosystem: "docker"
     directory: "/"
@@ -11,6 +18,7 @@ updates:
       interval: "monthly"
     assignees:
       - mkaraki
+    registries: "*"
   - package-ecosystem: "nuget"
     directory: "/"
     schedule:
