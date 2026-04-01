@@ -19,21 +19,37 @@ updates:
     assignees:
       - mkaraki
     registries: "*"
+    groups:
+      docker-all:
+        patterns:
+          - "*"
   - package-ecosystem: "nuget"
     directory: "/"
     schedule:
       interval: "monthly"
     assignees:
       - mkaraki
+    groups:
+      nuget-all:
+        patterns:
+          - "*"
   - package-ecosystem: "dotnet-sdk"
     directory: "/"
     schedule:
       interval: "monthly"
     assignees:
       - mkaraki
+    groups:
+      dotnet-all:
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
     assignees:
       - mkaraki
+    groups:
+      actions-all:
+        patterns:
+          - "*"
